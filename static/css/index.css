@@ -1,0 +1,46 @@
+﻿*{padding:0;margin:0;font-family: 微软雅黑;}
+.select{width:100%;height:100%;margin:100px auto;}
+.select input[type="text"]{width:490px;height:45px;outline: none;display: inline-block;float:left;font-size: 18px;border:none;background-color:rgba(230,230,230,0.6);color:#000;}
+.select input[type="submit"]{opacity:0.9;width:120px;height:45px;display: inline-block;float:left;background:#3385FF;color:white;border:none;font-size:16px;font-family:"Microsoft YaHei";font-weight:bold;border-top-right-radius: 2px;border-bottom-right-radius: 2px;}
+body{
+	background:url(../img/bg01.jpg);
+background-size:cover; background-attachment: fixed;width:100%;
+}
+.search ul.down{list-style:none;width:610px;height:200px;overflow:auto;background:rgba(200,200,200,0.5);display:none;}
+.search ul.down>li>a{text-decoration:none;color:#000;}
+h1{
+	color:#f0f0f0;
+	margin-top:20px;
+	text-align: center;
+	font-size: 72px;
+	letter-spacing: 4px;
+	font-family: "Microsoft YaHei";
+}
+.fl{
+	float: left;
+}
+.fr{
+	float: right;
+}
+.clearfix:after{
+	content:'';
+	display:block;
+	clear:both;
+}
+.main{
+	width:1000px;
+	margin:20px auto;
+	margin-top: 45px;
+
+}
+.logo{
+	margin:0 10px 0 150px;
+}
+.logo img{
+	width:100px;
+	height:53px;
+}
+.search{
+	margin-left: 200px;
+}
+li.current:hover{background:rgba(200,200,200,0.8)}

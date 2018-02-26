@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/css/init.css">
+    <link rel="stylesheet" href="../static/css/images.css">
+</head>
+<body>
+<div class="nav">
+    <ul class="clearfix">
+        <li><a href="http://172.18.77.15:50001"><img src="../static/img/logo4.png" alt=""></a></li>
+        <li>
+            <form action='{{ url_for('.redirect_to_new_url') }}' method="POST">
+            <input class="contents" type="text" name='content' placeholder="请输入查找内容" id="input">
+            <input class="buttons" type="submit" value="搜索一下" id="btn" >
+            </form>
+        </li>
+    </ul>
+</div>
+<div class="main">
+    <div class="leftBox" id="boxL">
+       <div class="center">
+        <a href="#" class="prePic"><img src="../static/img/left.png" alt=""></a>
+        <a href="#" class="nextPic"><img src="../static/img/right.png" alt=""></a>
+        <img class="pic" src="" alt="">
+       </div>
+    </div>
+    <div class="rightBox" id="boxR">
+
+    </div>
+</div>
+
+<script src="../static/js/jquery-3.2.1.min.js"></script>
+<script>
+    $(function() {
+        //得到有图片的显示信息
+        btn.onclick=function(){
+            var val= input.value;
+            if(val!==undefined) {
+                sessionStorage.clear();
+                sessionStorage.setItem("key",val);
+                console.log(sessionStorage['key']);
+            }
+        };
+        var info=window.location.href;
+        info=info.split('?');
+        var page=info[1].split('=');
+        var path=page[1];
+        $(".pic").attr("src",path);
+        console.log($('pic'));
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    doResponse(xhr);
+                } else {
+                    console.log("出错")
+                }
+            }
+        };
+        var val=sessionStorage.getItem("key");
+        console.log(val);
+        xhr.open("get", "http://172.18.77.15:50001/result/"+val+"/temp");
+        xhr.send(null);
+        function doResponse(xhr) {
+            var data = JSON.parse(xhr.responseText);
+	for (i = 0; i < data.rel.length&&i<8; i++) {
+                    var div = document.createElement("div");
+                    div.style.width = 50 + "%";
+                    div.innerHTML = "<img src=" + data.rel[i].path + " style='width:100px;height:90px;'>" + "<br>" + "<a class='' href='javascript:;' style='font-size:12px;display: inline-block;color:#333;' >" + data.rel[i].name + "</a>";
+                    div.style.float = "left";
+                    div.setAttribute("class", "pageLoading");
+                    div.setAttribute("page1", i);
+                    div.style.cursor = "pointer";
+
+                    $('#boxR').append(div);
+                }
+  $(".pageLoading").click(function () {
+                var page1 = $(this).attr("page1");
+                var a = $(this).children('a');
+                console.log(a);
+                var fileName = a.html();
+                console.log(fileName);
+                $(this).children("a").attr("href","http://172.18.77.15:50001/result/"+fileName);
+                console.log($(this).children("a"));
+
+            });
+            var index=0;
+            var result=new Array();
+            for(var i=0;i<data.images.length;i++) {
+                result.push(data.images[i].path);
+            }
+            console.log(result);
+            $(".nextPic").click(function(e){
+                index++;
+                if(index==result.length){
+                    index=0;
+                }
+                $(".pic").attr("src",result[index]);
+                console.log($(".pic").src);
+            })
+            $(".prePic").click(function(e){
+                index--;
+                if(index<0){
+                    index=result.length-1;
+                }
+                $(".pic").attr("src",result[index]);
+                console.log($(".pic").src);
+            });
+        }
+    })
+</script>
+</body>
+</html>

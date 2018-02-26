@@ -1,0 +1,79 @@
+# Sample.py
+# -*- coding: utf-8 -*-
+import sys
+import os
+import json
+import webbrowser
+import random
+import string
+import mysql.connector
+import time
+import shutil
+from flask import Flask, render_template, url_for, request, redirect, send_file
+
+
+def questoknowg(a):
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+    conn = mysql.connector.connect(user='root', password="123456", host="localhost", port=3306, database='ontodb',
+                                   charset="utf8")  # 连接数据库
+    # print '连接成功'
+    curs = conn.cursor()
+    srtcount = curs.execute("select *from  knowgraph where(实例1=\"%s\" or 实例2=\"%s\")" % (a, a))
+    sresult = curs.fetchall()
+    # for sretmp in sresult:
+    # print str(sretmp).decode('unicode-escape')
+    conn.commit()
+    curs.close()
+    conn.close()
+    return sresult
+
+
+def wresult(selresult,file_name):
+    noredata = []
+    for sretmp in selresult:
+        noredata.append(sretmp[1])
+        noredata.append(sretmp[2])
+    noredata = list(set(noredata))
+    # for sretmp1 in noredata:
+    # print sretmp1
+    logopath = "images/s.png"
+    listsdict = []
+    listsdict1 = []
+    for sretmp1 in noredata:
+        dictmp = {}
+        dictmp["name"] = sretmp1
+        dictmp["logo"] = logopath
+        listsdict.append(dictmp)
+    # for sretmp11 in listsdict:
+    # print listsdict
+    for sretmp11 in selresult:
+        dictmp1 = {}
+        dictmp1["source"] = sretmp11[1]
+        dictmp1["target"] = sretmp11[2]
+        dictmp1["relation"] = sretmp11[3]
+        listsdict1.append(dictmp1)
+    # print listsdict1
+    dicnode = {}
+    dicnode["nodes"] = listsdict
+    dicnode["links"] = listsdict1
+    # print dicnode
+    #file_name = 'static/js/data/data123.json'  # 通过扩展名指纹文件存储的数据为json格式
+    with open(file_name, 'w') as file_object:
+        json.dump(dicnode, file_object, ensure_ascii=False, indent=4)
+
+app = Flask(__name__)
+
+@app.route('/login')
+def login():
+    return render_template('index.html')
+
+@app.route('/result', methods=['POST'])
+def result():
+    content = request.form['content']
+    #if content=='卡尔':
+    return render_template("detail1.html")
+    #else:
+        #return render_template("hahahaha")
+if __name__ == '__main__':
+    app.run("0.0.0.0",port=31535, debug=True)

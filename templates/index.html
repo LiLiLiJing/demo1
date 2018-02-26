@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../static/css/index.css">
+</head>
+<body>
+<div class="select">
+    <h1 class="title">遥感信息知识图谱系统</h1>
+    <br>
+    <!--form-- action="">
+        <input type="text">
+        <a href="detail.html" id="btn">搜索一下</a>
+    </form-->
+    <!--form action='' method="POST"-->
+    <div class="main clearfix">
+        <div class="search fl">
+            <form  action='{{ url_for('.redirect_to_new_url') }}' method="POST">
+            <input class="contents" type="text" name='content' placeholder="请输入查找内容" id="input" autocomplete="off" >
+            <input class="buttons" type="submit" value="搜索一下"  id="btn">
+            </form>
+
+            <ul class="down" id="downLi">
+
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    var input=document.getElementById("input");
+    var btn=document.getElementById("btn");
+    var down=document.getElementById("downLi");
+    btn.onclick=function(){
+        var val= input.value;
+        sessionStorage.setItem("key",val);
+        console.log( sessionStorage['key']);
+    }
+    input.onkeyup=function() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    doResponse(xhr);
+                }else {
+                    console.log("出错")
+                }
+            }
+        };
+        var kw=input.value;
+        if(kw){
+            downLi.style.display="block";
+            console.log(kw);
+        }else{
+            downLi.style.display="none";
+        }
+        xhr.open("GET", "http://172.18.77.15:50001/result/"+kw+"/search", true);
+        xhr.send(null);
+        function doResponse(xhr) {
+            var data = xhr.responseText.split("@");
+            var html="";
+            for(var i=0;i<data.length-1;i++){
+                html+="<li class='current'><a href='http://172.18.77.15:50001/result/"+data[i]+"' style='display:inline-block;width:100%;height:inhert' index="+i+">"+data[i]+"</a></li>"
+            }
+            downLi.innerHTML=html;
+            downLi.addEventListener("click",function(e){
+               var target= e.target;
+               var index=target.getAttribute("index");
+               console.log(index);
+               sessionStorage.clear();
+                sessionStorage.setItem("key",data[index]);
+            })
+        }
+    }
+</script>
+</body>
+</html>
